@@ -288,7 +288,7 @@ def order_docx(item_id):
     mem = io.BytesIO()
     doc.save(mem)
     mem.seek(0)
-    fname = f"{'KO-1' if item.type=='income' else 'KO-2'}_{item.id}.docx"
+    fname = f"{'KO-1' if item.type == 'income' else 'KO-2'}_{item.id}.docx"
     _log("cash:order_docx", f"id={item.id}")
     return send_file(
         mem,
