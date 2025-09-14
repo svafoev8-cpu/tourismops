@@ -6,7 +6,9 @@ from dotenv import load_dotenv
 from flask import Flask
 from werkzeug.security import generate_password_hash
 
-from config import config_map  # ожидается: {"development": DevConfig, "production": ProdConfig, ...}
+from config import (
+    config_map,
+)  # ожидается: {"development": DevConfig, "production": ProdConfig, ...}
 from extensions import db, migrate, login_manager
 
 
@@ -45,6 +47,7 @@ def create_app() -> Flask:
     if app.config.get("SQLALCHEMY_DATABASE_URI", "").startswith("mysql+pymysql"):
         try:
             import pymysql  # noqa: F401
+
             pymysql.install_as_MySQLdb()
         except Exception:
             pass
@@ -56,7 +59,9 @@ def create_app() -> Flask:
     migrate.init_app(app, db)
     login_manager.init_app(app)
     # страница логина задаётся в extensions.py (auth.login)
-    login_manager.login_message = None  # не показывать английское сообщение по умолчанию
+    login_manager.login_message = (
+        None  # не показывать английское сообщение по умолчанию
+    )
 
     # =========================
     #  Регистрация блюпринтов
@@ -74,12 +79,14 @@ def create_app() -> Flask:
     # Опциональные (могут отсутствовать)
     try:
         from blueprints.refs import bp as refs_bp
+
         app.register_blueprint(refs_bp, url_prefix="/refs")
     except Exception:
         pass
 
     try:
         from blueprints.directory import bp as dir_bp
+
         app.register_blueprint(dir_bp, url_prefix="/directory")
     except Exception:
         pass
@@ -110,7 +117,7 @@ def create_app() -> Flask:
             return db.session.get(User, int(user_id))  # SA 2.x
         except Exception:
             try:
-                return User.query.get(int(user_id))     # fallback для SA 1.x
+                return User.query.get(int(user_id))  # fallback для SA 1.x
             except Exception:
                 return None
 
@@ -130,15 +137,20 @@ def create_app() -> Flask:
             admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
 
             # Импорт ещё раз здесь, чтобы гарантированно был маппер
-            from models import User as UserModel  # имя отдельно, чтобы не путать с локальным User
+            from models import (
+                User as UserModel,
+            )  # имя отдельно, чтобы не путать с локальным User
+
             exists = db.session.execute(
                 db.select(UserModel).filter_by(username=admin_username)
             ).scalar_one_or_none()
             if not exists:
-                db.session.add(UserModel(
-                    username=admin_username,
-                    password_hash=generate_password_hash(admin_password)
-                ))
+                db.session.add(
+                    UserModel(
+                        username=admin_username,
+                        password_hash=generate_password_hash(admin_password),
+                    )
+                )
                 db.session.commit()
                 app.logger.info("Создан админ-пользователь: %s", admin_username)
         except Exception as exc:

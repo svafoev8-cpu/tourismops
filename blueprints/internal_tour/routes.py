@@ -4,6 +4,7 @@ from models import InternalTour
 from . import bp
 from security import roles_required, ROLE
 
+
 @bp.route("/")
 @login_required
 @roles_required(ROLE["MANAGER_INT"], ROLE["ACCOUNTANT"], ROLE["EXEC"], ROLE["ADMIN"])

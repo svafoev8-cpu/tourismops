@@ -22,6 +22,7 @@ ACCOUNT_STATUS_CHOICES = [
     ("closed", "Закрыт"),
 ]
 
+
 class ClientForm(FlaskForm):
     item_id = HiddenField()  # для режима редактирования
     code = StringField(
@@ -32,7 +33,16 @@ class ClientForm(FlaskForm):
             Regexp(r"^\d{5}$", message="Допускаются только цифры"),
         ],
     )
-    name = StringField("Наименование клиента", validators=[DataRequired(), Length(max=255)])
-    account_type = SelectField("Тип счета", choices=ACCOUNT_TYPE_CHOICES, validators=[DataRequired()])
-    account_status = SelectField("Статус счета", choices=ACCOUNT_STATUS_CHOICES, default="open", validators=[DataRequired()])
+    name = StringField(
+        "Наименование клиента", validators=[DataRequired(), Length(max=255)]
+    )
+    account_type = SelectField(
+        "Тип счета", choices=ACCOUNT_TYPE_CHOICES, validators=[DataRequired()]
+    )
+    account_status = SelectField(
+        "Статус счета",
+        choices=ACCOUNT_STATUS_CHOICES,
+        default="open",
+        validators=[DataRequired()],
+    )
     submit = SubmitField("Сохранить")

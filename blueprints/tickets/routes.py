@@ -4,6 +4,7 @@ from models import TicketSale
 from . import bp
 from security import roles_required, ROLE
 
+
 @bp.route("/")
 @login_required
 @roles_required(ROLE["FINANCIER"], ROLE["ACCOUNTANT"], ROLE["EXEC"], ROLE["ADMIN"])

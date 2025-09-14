@@ -16,12 +16,24 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(255), nullable=False)  # храним ТОЛЬКО хеш
     role = db.Column(db.String(20), nullable=False, default="user", index=True)
 
-    cash_operations = db.relationship("CashOperation", back_populates="user", lazy="dynamic", passive_deletes=True)
-    bank_operations = db.relationship("BankOperation", back_populates="user", lazy="dynamic", passive_deletes=True)
-    ticket_sales   = db.relationship("TicketSale",   back_populates="user", lazy="dynamic", passive_deletes=True)
-    internal_tours = db.relationship("InternalTour", back_populates="user", lazy="dynamic", passive_deletes=True)
-    external_tours = db.relationship("ExternalTour", back_populates="user", lazy="dynamic", passive_deletes=True)
-    audit_logs     = db.relationship("AuditLog",     back_populates="user", lazy="dynamic", passive_deletes=True)
+    cash_operations = db.relationship(
+        "CashOperation", back_populates="user", lazy="dynamic", passive_deletes=True
+    )
+    bank_operations = db.relationship(
+        "BankOperation", back_populates="user", lazy="dynamic", passive_deletes=True
+    )
+    ticket_sales = db.relationship(
+        "TicketSale", back_populates="user", lazy="dynamic", passive_deletes=True
+    )
+    internal_tours = db.relationship(
+        "InternalTour", back_populates="user", lazy="dynamic", passive_deletes=True
+    )
+    external_tours = db.relationship(
+        "ExternalTour", back_populates="user", lazy="dynamic", passive_deletes=True
+    )
+    audit_logs = db.relationship(
+        "AuditLog", back_populates="user", lazy="dynamic", passive_deletes=True
+    )
 
     # --- пароли ---
     def set_password(self, password: str) -> None:
@@ -45,16 +57,28 @@ class Client(db.Model):
     # Тип счёта
     account_type = db.Column(db.String(50), nullable=False, index=True)
     # Статус счёта: open|closed
-    account_status = db.Column(db.String(10), nullable=False, default="open", index=True)
+    account_status = db.Column(
+        db.String(10), nullable=False, default="open", index=True
+    )
     # Бизнес-статус клиента: active|inactive (то, что ты просил для формы)
     status = db.Column(db.String(20), nullable=False, default="active", index=True)
 
     # ОБРАТНЫЕ СВЯЗИ (совпадают с back_populates в других моделях)
-    cash_operations = db.relationship("CashOperation", back_populates="client", lazy="dynamic", passive_deletes=True)
-    bank_operations = db.relationship("BankOperation", back_populates="client", lazy="dynamic", passive_deletes=True)
-    ticket_sales    = db.relationship("TicketSale",    back_populates="client", lazy="dynamic", passive_deletes=True)
-    internal_tours  = db.relationship("InternalTour",  back_populates="client", lazy="dynamic", passive_deletes=True)
-    external_tours  = db.relationship("ExternalTour",  back_populates="client", lazy="dynamic", passive_deletes=True)
+    cash_operations = db.relationship(
+        "CashOperation", back_populates="client", lazy="dynamic", passive_deletes=True
+    )
+    bank_operations = db.relationship(
+        "BankOperation", back_populates="client", lazy="dynamic", passive_deletes=True
+    )
+    ticket_sales = db.relationship(
+        "TicketSale", back_populates="client", lazy="dynamic", passive_deletes=True
+    )
+    internal_tours = db.relationship(
+        "InternalTour", back_populates="client", lazy="dynamic", passive_deletes=True
+    )
+    external_tours = db.relationship(
+        "ExternalTour", back_populates="client", lazy="dynamic", passive_deletes=True
+    )
 
     def __repr__(self):
         return f"<Client {self.code} - {self.name} [{self.account_type}] ({self.account_status}/{self.status})>"
@@ -68,11 +92,21 @@ class Supplier(db.Model):
     name = db.Column(db.String(255), nullable=False)
     phone = db.Column(db.String(32))
 
-    cash_operations = db.relationship("CashOperation", back_populates="supplier", lazy="dynamic", passive_deletes=True)
-    bank_operations = db.relationship("BankOperation", back_populates="supplier", lazy="dynamic", passive_deletes=True)
-    ticket_sales   = db.relationship("TicketSale",   back_populates="supplier", lazy="dynamic", passive_deletes=True)
-    internal_tours = db.relationship("InternalTour", back_populates="supplier", lazy="dynamic", passive_deletes=True)
-    external_tours = db.relationship("ExternalTour", back_populates="supplier", lazy="dynamic", passive_deletes=True)
+    cash_operations = db.relationship(
+        "CashOperation", back_populates="supplier", lazy="dynamic", passive_deletes=True
+    )
+    bank_operations = db.relationship(
+        "BankOperation", back_populates="supplier", lazy="dynamic", passive_deletes=True
+    )
+    ticket_sales = db.relationship(
+        "TicketSale", back_populates="supplier", lazy="dynamic", passive_deletes=True
+    )
+    internal_tours = db.relationship(
+        "InternalTour", back_populates="supplier", lazy="dynamic", passive_deletes=True
+    )
+    external_tours = db.relationship(
+        "ExternalTour", back_populates="supplier", lazy="dynamic", passive_deletes=True
+    )
 
     def __repr__(self):
         return f"<Supplier {self.code} - {self.name}>"
@@ -84,9 +118,21 @@ class CashOperation(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
-    client_id = db.Column(db.Integer, db.ForeignKey("client.id", ondelete="SET NULL"), nullable=True, index=True)
-    supplier_id = db.Column(db.Integer, db.ForeignKey("supplier.id", ondelete="SET NULL"), nullable=True, index=True)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("user.id"), nullable=False, index=True
+    )
+    client_id = db.Column(
+        db.Integer,
+        db.ForeignKey("client.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    supplier_id = db.Column(
+        db.Integer,
+        db.ForeignKey("supplier.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
 
     # 'income' | 'expense'
     op_type = db.Column(db.String(10), nullable=False, index=True)
@@ -98,7 +144,9 @@ class CashOperation(db.Model):
     description = db.Column(db.Text, nullable=True)
     fio = db.Column(db.String(255), nullable=True)
 
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, index=True)
+    created_at = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow, index=True
+    )
 
     user = db.relationship("User", back_populates="cash_operations")
     client = db.relationship("Client", back_populates="cash_operations")
@@ -114,9 +162,21 @@ class BankOperation(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
-    client_id = db.Column(db.Integer, db.ForeignKey("client.id", ondelete="SET NULL"), nullable=True, index=True)
-    supplier_id = db.Column(db.Integer, db.ForeignKey("supplier.id", ondelete="SET NULL"), nullable=True, index=True)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("user.id"), nullable=False, index=True
+    )
+    client_id = db.Column(
+        db.Integer,
+        db.ForeignKey("client.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    supplier_id = db.Column(
+        db.Integer,
+        db.ForeignKey("supplier.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
 
     # 'incoming' | 'outgoing'
     op_type = db.Column(db.String(10), nullable=False, index=True)
@@ -129,7 +189,9 @@ class BankOperation(db.Model):
     value_date = db.Column(db.Date, nullable=True)
     description = db.Column(db.Text, nullable=True)
 
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, index=True)
+    created_at = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow, index=True
+    )
 
     user = db.relationship("User", back_populates="bank_operations")
     client = db.relationship("Client", back_populates="bank_operations")
@@ -145,30 +207,46 @@ class TicketSale(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
-    client_id = db.Column(db.Integer, db.ForeignKey("client.id", ondelete="SET NULL"), nullable=True, index=True)
-    supplier_id = db.Column(db.Integer, db.ForeignKey("supplier.id", ondelete="SET NULL"), nullable=True, index=True)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("user.id"), nullable=False, index=True
+    )
+    client_id = db.Column(
+        db.Integer,
+        db.ForeignKey("client.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    supplier_id = db.Column(
+        db.Integer,
+        db.ForeignKey("supplier.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
 
-    airline_code = db.Column(db.String(8), nullable=True, index=True)      # Код А/К
-    passenger_name = db.Column(db.String(255), nullable=True)              # ФИО/Пассажира
-    ticket_number = db.Column(db.String(32), nullable=True, index=True)    # Номер А/Б
-    order_number = db.Column(db.String(64), nullable=True, index=True)     # Номер заказа
-    route = db.Column(db.String(255), nullable=True)                       # Маршрут
-    flight_number = db.Column(db.String(32), nullable=True, index=True)    # № рейс
+    airline_code = db.Column(db.String(8), nullable=True, index=True)  # Код А/К
+    passenger_name = db.Column(db.String(255), nullable=True)  # ФИО/Пассажира
+    ticket_number = db.Column(db.String(32), nullable=True, index=True)  # Номер А/Б
+    order_number = db.Column(db.String(64), nullable=True, index=True)  # Номер заказа
+    route = db.Column(db.String(255), nullable=True)  # Маршрут
+    flight_number = db.Column(db.String(32), nullable=True, index=True)  # № рейс
 
-    sale_date = db.Column(db.Date, nullable=True)                          # Дата продажи
-    departure_date = db.Column(db.Date, nullable=True)                     # Дата вылета
+    sale_date = db.Column(db.Date, nullable=True)  # Дата продажи
+    departure_date = db.Column(db.Date, nullable=True)  # Дата вылета
 
     currency = db.Column(db.String(3), nullable=False, default="USD")
     rate = db.Column(db.Numeric(12, 6), nullable=True)
 
-    fare_supplier = db.Column(db.Numeric(14, 2), nullable=True)            # тариф (номинал поставщика)
-    tax_supplier = db.Column(db.Numeric(14, 2), nullable=True)             # сборы
-    other_fees_supplier = db.Column(db.Numeric(14, 2), nullable=True)      # прочие сборы
-    our_fee_supplier = db.Column(db.Numeric(14, 2), nullable=True)         # наши сборы
-    total_supplier = db.Column(db.Numeric(14, 2), nullable=True)           # итого у поставщика
+    fare_supplier = db.Column(
+        db.Numeric(14, 2), nullable=True
+    )  # тариф (номинал поставщика)
+    tax_supplier = db.Column(db.Numeric(14, 2), nullable=True)  # сборы
+    other_fees_supplier = db.Column(db.Numeric(14, 2), nullable=True)  # прочие сборы
+    our_fee_supplier = db.Column(db.Numeric(14, 2), nullable=True)  # наши сборы
+    total_supplier = db.Column(db.Numeric(14, 2), nullable=True)  # итого у поставщика
 
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, index=True)
+    created_at = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow, index=True
+    )
 
     user = db.relationship("User", back_populates="ticket_sales")
     client = db.relationship("Client", back_populates="ticket_sales")
@@ -183,26 +261,41 @@ class InternalTour(db.Model):
     """
     Внутренние туры: расчёт нетто и маржи по формуле в приложении.
     """
+
     __tablename__ = "internal_tour"
 
     id = db.Column(db.Integer, primary_key=True)
 
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
-    client_id = db.Column(db.Integer, db.ForeignKey("client.id", ondelete="SET NULL"), nullable=True, index=True)
-    supplier_id = db.Column(db.Integer, db.ForeignKey("supplier.id", ondelete="SET NULL"), nullable=True, index=True)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("user.id"), nullable=False, index=True
+    )
+    client_id = db.Column(
+        db.Integer,
+        db.ForeignKey("client.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    supplier_id = db.Column(
+        db.Integer,
+        db.ForeignKey("supplier.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
 
     order_type = db.Column(db.String(50), nullable=True, index=True)  # тип заказа
     fio = db.Column(db.String(255), nullable=True)
     start_date = db.Column(db.Date, nullable=True)
     end_date = db.Column(db.Date, nullable=True)
-    direction = db.Column(db.String(255), nullable=True)             # направление/тур
+    direction = db.Column(db.String(255), nullable=True)  # направление/тур
     notes = db.Column(db.Text, nullable=True)
 
     currency = db.Column(db.String(3), nullable=False, default="USD")
-    cost = db.Column(db.Numeric(14, 2), nullable=True)               # себестоимость
-    sale_price = db.Column(db.Numeric(14, 2), nullable=True)         # цена продажи
+    cost = db.Column(db.Numeric(14, 2), nullable=True)  # себестоимость
+    sale_price = db.Column(db.Numeric(14, 2), nullable=True)  # цена продажи
 
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, index=True)
+    created_at = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow, index=True
+    )
 
     user = db.relationship("User", back_populates="internal_tours")
     client = db.relationship("Client", back_populates="internal_tours")
@@ -237,9 +330,21 @@ class ExternalTour(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
-    client_id = db.Column(db.Integer, db.ForeignKey("client.id", ondelete="SET NULL"), nullable=True, index=True)
-    supplier_id = db.Column(db.Integer, db.ForeignKey("supplier.id", ondelete="SET NULL"), nullable=True, index=True)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("user.id"), nullable=False, index=True
+    )
+    client_id = db.Column(
+        db.Integer,
+        db.ForeignKey("client.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    supplier_id = db.Column(
+        db.Integer,
+        db.ForeignKey("supplier.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
 
     order_type = db.Column(db.String(50), nullable=True, index=True)
     fio = db.Column(db.String(255), nullable=True)
@@ -252,7 +357,9 @@ class ExternalTour(db.Model):
     cost = db.Column(db.Numeric(14, 2), nullable=True)
     sale_price = db.Column(db.Numeric(14, 2), nullable=True)
 
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, index=True)
+    created_at = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow, index=True
+    )
 
     user = db.relationship("User", back_populates="external_tours")
     client = db.relationship("Client", back_populates="external_tours")
@@ -288,7 +395,9 @@ class AuditLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True, index=True)
     action = db.Column(db.String(255), nullable=False)
-    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, index=True)
+    timestamp = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow, index=True
+    )
     details = db.Column(db.Text, nullable=True)
 
     user = db.relationship("User", back_populates="audit_logs")
@@ -298,15 +407,15 @@ class AuditLog(db.Model):
 
 
 # ========= Индексы для типовых выборок =========
-db.Index("ix_cash_user_time",   CashOperation.user_id,  CashOperation.created_at)
-db.Index("ix_cash_type_time",   CashOperation.op_type,  CashOperation.created_at)
-db.Index("ix_bank_user_time",   BankOperation.user_id,  BankOperation.created_at)
-db.Index("ix_bank_type_time",   BankOperation.op_type,  BankOperation.created_at)
-db.Index("ix_ticket_user_time", TicketSale.user_id,     TicketSale.created_at)
+db.Index("ix_cash_user_time", CashOperation.user_id, CashOperation.created_at)
+db.Index("ix_cash_type_time", CashOperation.op_type, CashOperation.created_at)
+db.Index("ix_bank_user_time", BankOperation.user_id, BankOperation.created_at)
+db.Index("ix_bank_type_time", BankOperation.op_type, BankOperation.created_at)
+db.Index("ix_ticket_user_time", TicketSale.user_id, TicketSale.created_at)
 db.Index("ix_ticket_sale_date", TicketSale.sale_date)
-db.Index("ix_ticket_dep_date",  TicketSale.departure_date)
-db.Index("ix_inttour_user_time", InternalTour.user_id,  InternalTour.created_at)
-db.Index("ix_exttour_user_time", ExternalTour.user_id,  ExternalTour.created_at)
+db.Index("ix_ticket_dep_date", TicketSale.departure_date)
+db.Index("ix_inttour_user_time", InternalTour.user_id, InternalTour.created_at)
+db.Index("ix_exttour_user_time", ExternalTour.user_id, ExternalTour.created_at)
 
 
 # ========= Flask-Login user loader =========

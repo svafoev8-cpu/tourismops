@@ -7,6 +7,7 @@ from models import Client
 from . import bp
 from .forms import ClientForm, ACCOUNT_TYPE_CHOICES, ACCOUNT_STATUS_CHOICES
 
+
 @bp.route("/clients", methods=["GET", "POST"])
 @login_required
 def clients():
@@ -57,9 +58,9 @@ def clients():
 
     # Фильтры и поиск
     q = Client.query
-    status = request.args.get("status")          # open|closed|None
-    acc_type = request.args.get("type")          # одно из ACCOUNT_TYPE_CHOICES
-    term = request.args.get("q", "").strip()     # поисковая строка
+    status = request.args.get("status")  # open|closed|None
+    acc_type = request.args.get("type")  # одно из ACCOUNT_TYPE_CHOICES
+    term = request.args.get("q", "").strip()  # поисковая строка
 
     if status in ("open", "closed"):
         q = q.filter(Client.account_status == status)
@@ -80,6 +81,7 @@ def clients():
         ACCOUNT_TYPE_CHOICES=ACCOUNT_TYPE_CHOICES,
         ACCOUNT_STATUS_CHOICES=ACCOUNT_STATUS_CHOICES,
     )
+
 
 @bp.route("/clients/<int:pk>/delete", methods=["POST"])
 @login_required

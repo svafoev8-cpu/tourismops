@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import DecimalField, SelectField, StringField
 from wtforms.validators import DataRequired, NumberRange
 
+
 class CashForm(FlaskForm):
     type = SelectField(
         "Тип",

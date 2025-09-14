@@ -5,10 +5,7 @@ from decimal import Decimal, InvalidOperation
 import csv
 import io
 
-from flask import (
-    render_template, redirect, url_for, flash, request,
-    abort, send_file
-)
+from flask import render_template, redirect, url_for, flash, request, abort, send_file
 from flask_login import login_required, current_user
 
 from extensions import db
@@ -22,14 +19,17 @@ from security import roles_required, read_only_for, ROLE
 # ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 # =========================
 
+
 def _log(action: str, details: str = ""):
     """Запись действия в аудит."""
     try:
-        db.session.add(AuditLog(
-            user_id=getattr(current_user, "id", None),
-            action=action if not details else f"{action} | {details}",
-            timestamp=datetime.utcnow()
-        ))
+        db.session.add(
+            AuditLog(
+                user_id=getattr(current_user, "id", None),
+                action=action if not details else f"{action} | {details}",
+                timestamp=datetime.utcnow(),
+            )
+        )
         db.session.commit()
     except Exception:
         db.session.rollback()  # не валим основной поток из-за лога
@@ -88,6 +88,7 @@ def _apply_filters(q):
 # СПИСОК + ДОБАВЛЕНИЕ
 # =========================
 
+
 @bp.route("/", methods=["GET", "POST"])
 @login_required
 @roles_required(ROLE["CASHIER"], ROLE["ACCOUNTANT"], ROLE["EXEC"], ROLE["ADMIN"])
@@ -125,6 +126,7 @@ def list_ops():
 # ИСТОРИЯ С ФИЛЬТРАМИ
 # =========================
 
+
 @bp.route("/history")
 @login_required
 @roles_required(ROLE["CASHIER"], ROLE["ACCOUNTANT"], ROLE["EXEC"], ROLE["ADMIN"])
@@ -150,6 +152,7 @@ def history():
 # РЕДАКТИРОВАНИЕ / УДАЛЕНИЕ
 # =========================
 
+
 @bp.route("/<int:item_id>/edit", methods=["GET", "POST"])
 @login_required
 @roles_required(ROLE["CASHIER"], ROLE["ACCOUNTANT"], ROLE["ADMIN"])
@@ -160,7 +163,10 @@ def edit(item_id):
         abort(404)
 
     # ограничение: не админ/руководство могут править только свои записи
-    if getattr(current_user, "role", "") not in ("admin", "executive") and item.user_id != current_user.id:
+    if (
+        getattr(current_user, "role", "") not in ("admin", "executive")
+        and item.user_id != current_user.id
+    ):
         abort(403)
 
     form = CashForm(obj=item)
@@ -188,7 +194,10 @@ def delete(item_id):
     if not item:
         abort(404)
 
-    if getattr(current_user, "role", "") not in ("admin", "executive") and item.user_id != current_user.id:
+    if (
+        getattr(current_user, "role", "") not in ("admin", "executive")
+        and item.user_id != current_user.id
+    ):
         abort(403)
 
     db.session.delete(item)
@@ -202,6 +211,7 @@ def delete(item_id):
 # ПЕЧАТЬ ОРДЕРА (HTML)
 # =========================
 
+
 @bp.route("/order/<int:item_id>")
 @login_required
 @roles_required(ROLE["CASHIER"], ROLE["ACCOUNTANT"], ROLE["EXEC"], ROLE["ADMIN"])
@@ -210,7 +220,10 @@ def order(item_id):
     if not item:
         abort(404)
     # не-руководство видят только свои
-    if getattr(current_user, "role", "") not in ("admin", "executive") and item.user_id != current_user.id:
+    if (
+        getattr(current_user, "role", "") not in ("admin", "executive")
+        and item.user_id != current_user.id
+    ):
         abort(403)
     return render_template("cash/order.html", item=item)
 
@@ -218,6 +231,7 @@ def order(item_id):
 # =========================
 # KO-1 / KO-2 → DOCX
 # =========================
+
 
 @bp.route("/order-docx/<int:item_id>")
 @login_required
@@ -228,7 +242,10 @@ def order_docx(item_id):
         abort(404)
 
     # не-руководство видят только свои
-    if getattr(current_user, "role", "") not in ("admin", "executive") and item.user_id != current_user.id:
+    if (
+        getattr(current_user, "role", "") not in ("admin", "executive")
+        and item.user_id != current_user.id
+    ):
         abort(403)
 
     from docxtpl import DocxTemplate
@@ -273,13 +290,18 @@ def order_docx(item_id):
     mem.seek(0)
     fname = f"{'KO-1' if item.type=='income' else 'KO-2'}_{item.id}.docx"
     _log("cash:order_docx", f"id={item.id}")
-    return send_file(mem, as_attachment=True, download_name=fname,
-                     mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    return send_file(
+        mem,
+        as_attachment=True,
+        download_name=fname,
+        mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    )
 
 
 # =========================
 # ЭКСПОРТ CSV
 # =========================
+
 
 @bp.route("/export.csv")
 @login_required
@@ -289,18 +311,20 @@ def export_csv():
     items = q.order_by(CashOperation.timestamp.asc()).all()
 
     output = io.StringIO()
-    writer = csv.writer(output, delimiter=';')
+    writer = csv.writer(output, delimiter=";")
     writer.writerow(["Дата", "Тип", "Сумма", "Валюта", "Пользователь", "Описание"])
 
     for i in items:
-        writer.writerow([
-            i.timestamp.strftime("%Y-%m-%d %H:%M") if i.timestamp else "",
-            i.type,
-            f"{i.amount}",
-            i.currency,
-            i.user_id,
-            (i.description or "").replace("\n", " ").strip()
-        ])
+        writer.writerow(
+            [
+                i.timestamp.strftime("%Y-%m-%d %H:%M") if i.timestamp else "",
+                i.type,
+                f"{i.amount}",
+                i.currency,
+                i.user_id,
+                (i.description or "").replace("\n", " ").strip(),
+            ]
+        )
 
     mem = io.BytesIO(output.getvalue().encode("utf-8-sig"))  # с BOM для Excel
     filename = f"cash_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"

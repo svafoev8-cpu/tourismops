@@ -6,6 +6,7 @@ from sqlalchemy import text
 
 app = create_app()
 
+
 def main():
     print("== Manage: init DB and admin ==")
     try:
@@ -31,6 +32,7 @@ def main():
     except Exception as e:
         print("ERROR:", e, file=sys.stderr)
         raise
+
 
 if __name__ == "__main__":
     main()

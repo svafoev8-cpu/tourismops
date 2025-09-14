@@ -4,6 +4,7 @@ Revision ID: cee3f3dee836
 Revises: ef68991e21a0
 Create Date: 2025-09-14 12:25:44.355507
 """
+
 from alembic import op
 import sqlalchemy as sa
 
@@ -58,7 +59,9 @@ def upgrade():
     with op.batch_alter_table("audit_log", schema=None) as batch_op:
         if not _column_exists("audit_log", "details"):
             batch_op.add_column(sa.Column("details", sa.Text(), nullable=True))
-        batch_op.alter_column("action", existing_type=sa.String(length=255), nullable=False)
+        batch_op.alter_column(
+            "action", existing_type=sa.String(length=255), nullable=False
+        )
         batch_op.alter_column("timestamp", existing_type=sa.DateTime(), nullable=False)
 
     if not _index_exists("audit_log", "ix_audit_log_timestamp"):
@@ -73,11 +76,15 @@ def upgrade():
         if not _column_exists("bank_operation", "supplier_id"):
             batch_op.add_column(sa.Column("supplier_id", sa.Integer(), nullable=True))
         if not _column_exists("bank_operation", "op_type"):
-            batch_op.add_column(sa.Column("op_type", sa.String(length=10), nullable=False))
+            batch_op.add_column(
+                sa.Column("op_type", sa.String(length=10), nullable=False)
+            )
         if not _column_exists("bank_operation", "rate"):
             batch_op.add_column(sa.Column("rate", sa.Numeric(12, 6), nullable=True))
         if not _column_exists("bank_operation", "doc_number"):
-            batch_op.add_column(sa.Column("doc_number", sa.String(length=64), nullable=True))
+            batch_op.add_column(
+                sa.Column("doc_number", sa.String(length=64), nullable=True)
+            )
         if not _column_exists("bank_operation", "value_date"):
             batch_op.add_column(sa.Column("value_date", sa.Date(), nullable=True))
 
@@ -126,7 +133,12 @@ def upgrade():
         pass
     try:
         op.create_foreign_key(
-            None, "bank_operation", "supplier", ["supplier_id"], ["id"], ondelete="SET NULL"
+            None,
+            "bank_operation",
+            "supplier",
+            ["supplier_id"],
+            ["id"],
+            ondelete="SET NULL",
         )
     except Exception:
         pass
@@ -134,7 +146,9 @@ def upgrade():
     # ----- CASH_OPERATION -----
     with op.batch_alter_table("cash_operation", schema=None) as batch_op:
         if not _column_exists("cash_operation", "op_type"):
-            batch_op.add_column(sa.Column("op_type", sa.String(length=10), nullable=False))
+            batch_op.add_column(
+                sa.Column("op_type", sa.String(length=10), nullable=False)
+            )
         if not _column_exists("cash_operation", "rate"):
             batch_op.add_column(sa.Column("rate", sa.Numeric(12, 6), nullable=True))
         if not _column_exists("cash_operation", "fio"):
@@ -175,7 +189,12 @@ def upgrade():
     # восстановим FKs, если их не было
     try:
         op.create_foreign_key(
-            None, "cash_operation", "supplier", ["supplier_id"], ["id"], ondelete="SET NULL"
+            None,
+            "cash_operation",
+            "supplier",
+            ["supplier_id"],
+            ["id"],
+            ondelete="SET NULL",
         )
     except Exception:
         pass
@@ -190,19 +209,34 @@ def upgrade():
     with op.batch_alter_table("client", schema=None) as batch_op:
         if not _column_exists("client", "account_type"):
             batch_op.add_column(
-                sa.Column("account_type", sa.String(length=50), nullable=False, server_default="current")
+                sa.Column(
+                    "account_type",
+                    sa.String(length=50),
+                    nullable=False,
+                    server_default="current",
+                )
             )
             batch_op.alter_column("account_type", server_default=None)
 
         if not _column_exists("client", "account_status"):
             batch_op.add_column(
-                sa.Column("account_status", sa.String(length=10), nullable=False, server_default="open")
+                sa.Column(
+                    "account_status",
+                    sa.String(length=10),
+                    nullable=False,
+                    server_default="open",
+                )
             )
             batch_op.alter_column("account_status", server_default=None)
 
         if not _column_exists("client", "status"):
             batch_op.add_column(
-                sa.Column("status", sa.String(length=20), nullable=False, server_default="active")
+                sa.Column(
+                    "status",
+                    sa.String(length=20),
+                    nullable=False,
+                    server_default="active",
+                )
             )
             batch_op.alter_column("status", server_default=None)
 
@@ -229,10 +263,21 @@ def upgrade():
             ("user_id", sa.Column("user_id", sa.Integer(), nullable=False)),
             ("client_id", sa.Column("client_id", sa.Integer(), nullable=True)),
             ("supplier_id", sa.Column("supplier_id", sa.Integer(), nullable=True)),
-            ("order_type", sa.Column("order_type", sa.String(length=50), nullable=True)),
+            (
+                "order_type",
+                sa.Column("order_type", sa.String(length=50), nullable=True),
+            ),
             ("fio", sa.Column("fio", sa.String(length=255), nullable=True)),
             ("direction", sa.Column("direction", sa.String(length=255), nullable=True)),
-            ("currency", sa.Column("currency", sa.String(length=3), nullable=False, server_default="USD")),
+            (
+                "currency",
+                sa.Column(
+                    "currency",
+                    sa.String(length=3),
+                    nullable=False,
+                    server_default="USD",
+                ),
+            ),
         ]:
             if not _column_exists("external_tour", name):
                 batch_op.add_column(col)
@@ -284,10 +329,21 @@ def upgrade():
             ("user_id", sa.Column("user_id", sa.Integer(), nullable=False)),
             ("client_id", sa.Column("client_id", sa.Integer(), nullable=True)),
             ("supplier_id", sa.Column("supplier_id", sa.Integer(), nullable=True)),
-            ("order_type", sa.Column("order_type", sa.String(length=50), nullable=True)),
+            (
+                "order_type",
+                sa.Column("order_type", sa.String(length=50), nullable=True),
+            ),
             ("fio", sa.Column("fio", sa.String(length=255), nullable=True)),
             ("direction", sa.Column("direction", sa.String(length=255), nullable=True)),
-            ("currency", sa.Column("currency", sa.String(length=3), nullable=False, server_default="USD")),
+            (
+                "currency",
+                sa.Column(
+                    "currency",
+                    sa.String(length=3),
+                    nullable=False,
+                    server_default="USD",
+                ),
+            ),
         ]:
             if not _column_exists("internal_tour", name):
                 batch_op.add_column(col)
@@ -349,16 +405,40 @@ def upgrade():
         for name, col in [
             ("client_id", sa.Column("client_id", sa.Integer(), nullable=True)),
             ("supplier_id", sa.Column("supplier_id", sa.Integer(), nullable=True)),
-            ("airline_code", sa.Column("airline_code", sa.String(length=8), nullable=True)),
-            ("order_number", sa.Column("order_number", sa.String(length=64), nullable=True)),
-            ("flight_number", sa.Column("flight_number", sa.String(length=32), nullable=True)),
+            (
+                "airline_code",
+                sa.Column("airline_code", sa.String(length=8), nullable=True),
+            ),
+            (
+                "order_number",
+                sa.Column("order_number", sa.String(length=64), nullable=True),
+            ),
+            (
+                "flight_number",
+                sa.Column("flight_number", sa.String(length=32), nullable=True),
+            ),
             ("departure_date", sa.Column("departure_date", sa.Date(), nullable=True)),
             ("rate", sa.Column("rate", sa.Numeric(12, 6), nullable=True)),
-            ("fare_supplier", sa.Column("fare_supplier", sa.Numeric(14, 2), nullable=True)),
-            ("tax_supplier", sa.Column("tax_supplier", sa.Numeric(14, 2), nullable=True)),
-            ("other_fees_supplier", sa.Column("other_fees_supplier", sa.Numeric(14, 2), nullable=True)),
-            ("our_fee_supplier", sa.Column("our_fee_supplier", sa.Numeric(14, 2), nullable=True)),
-            ("total_supplier", sa.Column("total_supplier", sa.Numeric(14, 2), nullable=True)),
+            (
+                "fare_supplier",
+                sa.Column("fare_supplier", sa.Numeric(14, 2), nullable=True),
+            ),
+            (
+                "tax_supplier",
+                sa.Column("tax_supplier", sa.Numeric(14, 2), nullable=True),
+            ),
+            (
+                "other_fees_supplier",
+                sa.Column("other_fees_supplier", sa.Numeric(14, 2), nullable=True),
+            ),
+            (
+                "our_fee_supplier",
+                sa.Column("our_fee_supplier", sa.Numeric(14, 2), nullable=True),
+            ),
+            (
+                "total_supplier",
+                sa.Column("total_supplier", sa.Numeric(14, 2), nullable=True),
+            ),
         ]:
             if not _column_exists("ticket_sale", name):
                 batch_op.add_column(col)
