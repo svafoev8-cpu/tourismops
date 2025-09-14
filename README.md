@@ -7,3 +7,5 @@ python -m venv .venv
 pip install -r requirements.txt
 cp .env.example .env
 flask --app app.py run
+
+![CI](https://github.com/svafoev8-cpu/tourismops/actions/workflows/ci.yml/badge.svg)
