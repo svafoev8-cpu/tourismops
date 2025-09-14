@@ -17,4 +17,4 @@ jobs:
       - run: pip install black flake8 pytest
       - run: black --check .
       - run: flake8 .
-      - run: pytest -q || echo "No tests yet" 
+      - run: pytest -q || echo "No tests yet"

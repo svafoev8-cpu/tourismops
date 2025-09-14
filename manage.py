@@ -1,9 +1,11 @@
+import os
+import sys
+
+from sqlalchemy import text
+
 from app import create_app
 from extensions import db
 from models import User
-import os
-import sys
-from sqlalchemy import text
 
 app = create_app()
 

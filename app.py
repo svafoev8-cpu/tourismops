@@ -6,11 +6,10 @@ from dotenv import load_dotenv
 from flask import Flask
 from werkzeug.security import generate_password_hash
 
-from config import (
+from config import (  # ожидается: {"development": DevConfig, "production": ProdConfig, ...}
     config_map,
-)  # ожидается: {"development": DevConfig, "production": ProdConfig, ...}
-from extensions import db, migrate, login_manager
-
+)
+from extensions import db, login_manager, migrate
 
 # =========================
 #  Загрузка .env и базовые настройки
@@ -66,15 +65,15 @@ def create_app() -> Flask:
     # =========================
     #  Регистрация блюпринтов
     # =========================
-    from blueprints.auth import bp as auth_bp
-    from blueprints.core import bp as core_bp
-    from blueprints.cash import bp as cash_bp
-    from blueprints.bank import bp as bank_bp
-    from blueprints.tickets import bp as tickets_bp
-    from blueprints.internal_tour import bp as int_bp
-    from blueprints.external_tour import bp as ext_bp
-    from blueprints.reports import bp as reports_bp
     from blueprints.analytics import bp as analytics_bp
+    from blueprints.auth import bp as auth_bp
+    from blueprints.bank import bp as bank_bp
+    from blueprints.cash import bp as cash_bp
+    from blueprints.core import bp as core_bp
+    from blueprints.external_tour import bp as ext_bp
+    from blueprints.internal_tour import bp as int_bp
+    from blueprints.reports import bp as reports_bp
+    from blueprints.tickets import bp as tickets_bp
 
     # Опциональные (могут отсутствовать)
     try:
@@ -138,8 +137,8 @@ def create_app() -> Flask:
 
             # Импорт ещё раз здесь, чтобы гарантированно был маппер
             from models import (
-                User as UserModel,
-            )  # имя отдельно, чтобы не путать с локальным User
+                User as UserModel,  # имя отдельно, чтобы не путать с локальным User
+            )
 
             exists = db.session.execute(
                 db.select(UserModel).filter_by(username=admin_username)

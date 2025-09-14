@@ -1,19 +1,19 @@
 # C:\tourismops\blueprints\cash\routes.py
 
-from datetime import datetime
-from decimal import Decimal, InvalidOperation
 import csv
 import io
+from datetime import datetime
+from decimal import Decimal, InvalidOperation
 
-from flask import render_template, redirect, url_for, flash, request, abort, send_file
-from flask_login import login_required, current_user
+from flask import abort, flash, redirect, render_template, request, send_file, url_for
+from flask_login import current_user, login_required
 
 from extensions import db
-from models import CashOperation, AuditLog
+from models import AuditLog, CashOperation
+from security import ROLE, read_only_for, roles_required
+
 from . import bp
 from .forms import CashForm
-from security import roles_required, read_only_for, ROLE
-
 
 # =========================
 # ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
@@ -248,11 +248,12 @@ def order_docx(item_id):
     ):
         abort(403)
 
-    from docxtpl import DocxTemplate
-    from decimal import Decimal
-    from num2words import num2words
     import os
+    from decimal import Decimal
+
+    from docxtpl import DocxTemplate
     from flask import current_app
+    from num2words import num2words
 
     # выбираем шаблон
     doc_name = "ko-1.docx" if item.type == "income" else "ko-2.docx"

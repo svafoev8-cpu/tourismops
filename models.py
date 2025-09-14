@@ -1,8 +1,9 @@
 # C:\tourismops\models.py
-from datetime import datetime, date
+from datetime import date, datetime
 from decimal import Decimal
+
 from flask_login import UserMixin
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from extensions import db, login_manager
 

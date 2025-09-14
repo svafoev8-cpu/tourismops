@@ -1,6 +1,6 @@
 # C:\tourismops\blueprints\refs\forms.py
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SubmitField, HiddenField
+from wtforms import HiddenField, SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired, Length, Regexp
 
 ACCOUNT_TYPE_CHOICES = [

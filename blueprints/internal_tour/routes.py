@@ -1,8 +1,10 @@
 from flask import render_template
 from flask_login import login_required
+
 from models import InternalTour
+from security import ROLE, roles_required
+
 from . import bp
-from security import roles_required, ROLE
 
 
 @bp.route("/")

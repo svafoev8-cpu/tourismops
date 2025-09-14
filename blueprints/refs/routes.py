@@ -1,11 +1,13 @@
 # C:\tourismops\blueprints\refs\routes.py
-from flask import render_template, redirect, url_for, request, flash
+from flask import flash, redirect, render_template, request, url_for
 from flask_login import login_required
 from sqlalchemy.exc import IntegrityError
+
 from extensions import db
 from models import Client
+
 from . import bp
-from .forms import ClientForm, ACCOUNT_TYPE_CHOICES, ACCOUNT_STATUS_CHOICES
+from .forms import ACCOUNT_STATUS_CHOICES, ACCOUNT_TYPE_CHOICES, ClientForm
 
 
 @bp.route("/clients", methods=["GET", "POST"])

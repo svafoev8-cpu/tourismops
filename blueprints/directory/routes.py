@@ -1,9 +1,11 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import flash, redirect, render_template, request, url_for
 from flask_login import login_required
+
 from extensions import db
-from models import Supplier, Subagent
+from models import Subagent, Supplier
+from security import ROLE, roles_required
+
 from . import bp
-from security import roles_required, ROLE
 
 
 @bp.route("/suppliers")
