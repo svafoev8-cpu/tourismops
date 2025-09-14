@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+{% block title %}Ордер №{{ item.id }}{% endblock %}
+{% block content %}
+<div class="bg-white border rounded-2xl shadow p-6 max-w-3xl">
+  <div class="text-xl font-semibold mb-4">Кассовый ордер № {{ item.id }}</div>
+  <div class="space-y-2 text-sm">
+    <div><span class="text-slate-500">Дата:</span> {{ item.timestamp.strftime('%d.%m.%Y') if item.timestamp }}</div>
+    <div><span class="text-slate-500">Тип:</span> {{ 'Приход' if item.type=='income' else 'Расход' }}</div>
+    <div><span class="text-slate-500">Сумма:</span> {{ item.amount }} {{ item.currency }}</div>
+    <div><span class="text-slate-500">ФИО:</span> {{ getattr(item, 'fio', '') }}</div>
+    <div><span class="text-slate-500">Основание:</span> {{ item.description }}</div>
+  </div>
+  <div class="mt-6 print:hidden">
+    <a class="px-3 py-2 border rounded mr-2" href="{{ url_for('cash.order_docx', item_id=item.id) }}">Скачать DOCX</a>
+    <button onclick="window.print()" class="bg-slate-900 text-white rounded px-4 py-2">Печать</button>
+    <a class="ml-2 px-3 py-2 border rounded" href="{{ url_for('cash.history') }}">Назад</a>
+  </div>
+</div>
+{% endblock %}

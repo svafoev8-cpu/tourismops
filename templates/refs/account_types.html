@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Типы счетов{% endblock %}
+{% block content %}
+<h1>Типы счетов</h1>
+{% include "refs/_list_header.html" %}
+
+<form method="post" action="{{ url_for('refs.account_types_new') }}" class="card p-3 mb-3">
+  {{ csrf_token() }}
+  <div class="row" style="display:flex; gap:.5rem; align-items:end;">
+    <div style="flex:1;">
+      <label class="form-label">Наименование типа</label>
+      <input name="name" class="form-control" maxlength="64" required>
+    </div>
+    <div><button class="btn btn-primary">Добавить</button></div>
+  </div>
+</form>
+
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table mb-0">
+      <thead><tr><th>ID</th><th>Наименование</th><th style="width:120px;"></th></tr></thead>
+      <tbody>
+        {% for it in items.items %}
+        <tr>
+          <td>{{ it.id }}</td>
+          <td>{{ it.name }}</td>
+          <td class="text-end">
+            <form method="post" action="{{ url_for('refs.account_types_delete', item_id=it.id) }}" onsubmit="return confirm('Удалить тип?');" style="display:inline">
+              {{ csrf_token() }} <button class="btn btn-sm btn-outline-danger">Удалить</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" class="text-center p-4">Нет данных</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

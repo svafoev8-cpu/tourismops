@@ -1,0 +1,76 @@
+{# templates/refs/clients.html #}
+{% extends "base.html" %}
+{% block title %}Справочник клиентов — TourismOps{% endblock %}
+
+{% block page_header %}
+<h1>Справочник клиентов</h1>
+{% endblock %}
+
+{% block content %}
+<form method="get" class="card" style="padding:12px;margin-bottom:12px;display:grid;gap:10px">
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <input type="text" name="q" value="{{ q or '' }}" placeholder="Поиск по коду или названию"
+           style="flex:1;min-width:220px;padding:10px;border:1px solid #e5e7eb;border-radius:10px">
+    <select name="account_type" style="padding:10px;border:1px solid #e5e7eb;border-radius:10px">
+      <option value="">Тип аккаунта</option>
+      {% for v in ACCOUNT_TYPE_CHOICES %}
+        <option value="{{ v }}" {{ 'selected' if request.args.get('account_type')==v else '' }}>{{ v }}</option>
+      {% endfor %}
+    </select>
+    <select name="account_status" style="padding:10px;border:1px solid #e5e7eb;border-radius:10px">
+      <option value="">Статус</option>
+      {% for v in ACCOUNT_STATUS_CHOICES %}
+        <option value="{{ v }}" {{ 'selected' if request.args.get('account_status')==v else '' }}>{{ v }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-primary" type="submit">Фильтр</button>
+  </div>
+</form>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th style="width:120px">Код</th>
+        <th>Наименование</th>
+        <th style="width:160px">Тип</th>
+        <th style="width:140px">Статус</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in clients %}
+        <tr>
+          <td>{{ c.code }}</td>
+          <td>{{ c.name }}</td>
+          <td>{{ c.account_type }}</td>
+          <td>{{ c.account_status }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="4" style="text-align:center;color:#6b7280">Ничего не найдено</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if pagination %}
+<nav style="margin-top:10px;display:flex;gap:8px;align-items:center">
+  {% if pagination.has_prev %}
+    <a class="btn" href="{{ url_for('refs.clients', page=pagination.prev_num, q=q,
+                                     account_type=request.args.get('account_type'),
+                                     account_status=request.args.get('account_status')) }}">« Назад</a>
+  {% else %}
+    <span class="btn" style="opacity:.5;pointer-events:none">« Назад</span>
+  {% endif %}
+
+  <span>Стр. {{ pagination.page }} из {{ pagination.pages }}</span>
+
+  {% if pagination.has_next %}
+    <a class="btn" href="{{ url_for('refs.clients', page=pagination.next_num, q=q,
+                                     account_type=request.args.get('account_type'),
+                                     account_status=request.args.get('account_status')) }}">Вперёд »</a>
+  {% else %}
+    <span class="btn" style="opacity:.5;pointer-events:none">Вперёд »</span>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

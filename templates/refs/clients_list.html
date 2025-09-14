@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Клиенты{% endblock %}
+{% block content %}
+<h1>Клиенты</h1>
+{% include "refs/_list_header.html" %}
+<a class="btn btn-success mb-2" href="{{ url_for('refs.clients_new') }}">+ Новый клиент</a>
+
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table mb-0">
+      <thead><tr><th>ID</th><th>Код</th><th>Наименование</th><th style="width:160px;"></th></tr></thead>
+      <tbody>
+        {% for it in items.items %}
+        <tr>
+          <td>{{ it.id }}</td>
+          <td>{{ it.code }}</td>
+          <td>{{ it.name }}</td>
+          <td class="text-end">
+            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('refs.clients_edit', item_id=it.id) }}">Изм.</a>
+            <form method="post" action="{{ url_for('refs.clients_delete', item_id=it.id) }}" style="display:inline" onsubmit="return confirm('Удалить?');">
+              <button class="btn btn-sm btn-outline-danger">Удалить</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="text-center p-4">Нет данных</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<nav class="mt-3">
+  <ul class="pagination">
+    {% if items.has_prev %}
+      <li class="page-item"><a class="page-link" href="{{ url_for('refs.clients_list', page=items.prev_num, q=q) }}">«</a></li>
+    {% endif %}
+    <li class="page-item disabled"><span class="page-link">стр. {{ items.page }} / {{ items.pages or 1 }}</span></li>
+    {% if items.has_next %}
+      <li class="page-item"><a class="page-link" href="{{ url_for('refs.clients_list', page=items.next_num, q=q) }}">»</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endblock %}

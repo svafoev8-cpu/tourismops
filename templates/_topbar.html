@@ -1,0 +1,11 @@
+<div class="px-4 md:px-6 lg:px-8 h-14 flex items-center justify-between">
+  <div class="lg:hidden font-semibold">TourismOps</div>
+  <div class="flex items-center gap-3 text-sm">
+    {% if current_user.is_authenticated %}
+      <span class="text-slate-600">👤 {{ current_user.username }} <span class="text-slate-400">({{ current_user.role }})</span></span>
+      <a class="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50" href="{{ url_for('auth.logout') }}">Выйти</a>
+    {% else %}
+      <a class="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50" href="{{ url_for('auth.login') }}">Войти</a>
+    {% endif %}
+  </div>
+</div>

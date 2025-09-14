@@ -1,0 +1,64 @@
+{% extends 'layout.html' %}
+{% block title %}История кассы{% endblock %}
+{% block content %}
+<div class="bg-white border rounded-2xl shadow p-6">
+  <h1 class="text-xl font-semibold mb-4">История кассы</h1>
+
+  <form method="get" class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-4">
+    <input type="date" name="from" value="{{ request.args.get('from','') }}" class="border rounded px-3 py-2">
+    <input type="date" name="to"   value="{{ request.args.get('to','') }}" class="border rounded px-3 py-2">
+    <select name="type" class="border rounded px-3 py-2">
+      <option value="">Тип (все)</option>
+      <option value="income"  {% if request.args.get('type')=='income' %}selected{% endif %}>Приход</option>
+      <option value="expense" {% if request.args.get('type')=='expense' %}selected{% endif %}>Расход</option>
+    </select>
+    <select name="currency" class="border rounded px-3 py-2">
+      <option value="">Валюта (все)</option>
+      {% for c in ['UZS','USD','EUR'] %}
+      <option value="{{c}}" {% if request.args.get('currency')==c %}selected{% endif %}>{{c}}</option>
+      {% endfor %}
+    </select>
+    <label class="inline-flex items-center gap-2 text-sm">
+      <input type="checkbox" name="mine" value="1" {% if request.args.get('mine')=='1' %}checked{% endif %}>
+      Только мои
+    </label>
+    <div class="md:col-span-5">
+      <a class="px-3 py-2 border rounded mr-2" href="{{ url_for('cash.history') }}">Сброс</a>
+      <button class="px-3 py-2 bg-slate-900 text-white rounded">Применить</button>
+      <a class="px-3 py-2 border rounded ml-2" href="{{ url_for('cash.export_csv', **request.args) }}">Экспорт CSV</a>
+    </div>
+  </form>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+    <div class="p-3 border rounded-lg"><div class="text-xs text-slate-500">Приход</div><div class="text-lg font-semibold">{{ total_income }}</div></div>
+    <div class="p-3 border rounded-lg"><div class="text-xs text-slate-500">Расход</div><div class="text-lg font-semibold">{{ total_expense }}</div></div>
+    <div class="p-3 border rounded-lg"><div class="text-xs text-slate-500">Баланс</div><div class="text-lg font-semibold">{{ balance }}</div></div>
+  </div>
+
+  <table class="w-full text-sm">
+    <thead><tr class="text-left text-slate-500">
+      <th class="py-2">Дата</th><th>Тип</th><th>Сумма</th><th>Валюта</th><th>Описание</th><th></th>
+    </tr></thead>
+    <tbody>
+      {% for i in items %}
+      <tr class="border-t">
+        <td class="py-2">{{ i.timestamp.strftime('%Y-%m-%d %H:%M') if i.timestamp }}</td>
+        <td>{{ 'Приход' if i.type=='income' else 'Расход' }}</td>
+        <td>{{ i.amount }}</td>
+        <td>{{ i.currency }}</td>
+        <td>{{ i.description }}</td>
+        <td class="text-right whitespace-nowrap">
+          <a class="text-blue-600 mr-2" href="{{ url_for('cash.order', item_id=i.id) }}">Печать</a>
+          <a class="text-blue-600 mr-2" href="{{ url_for('cash.edit', item_id=i.id) }}">Изм.</a>
+          <form method="post" action="{{ url_for('cash.delete', item_id=i.id) }}" class="inline" onsubmit="return confirm('Удалить?')">
+            <button class="text-rose-600">Удал.</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="py-4 text-slate-500">Нет данных</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

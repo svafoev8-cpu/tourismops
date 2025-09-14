@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Справочники{% endblock %}
+{% block content %}
+<h1 style="margin:0 0 14px;">Справочники</h1>
+
+<div class="card" style="margin-bottom:16px;">
+  <h2 style="margin:0 0 12px; font-size:18px;">Типы счетов</h2>
+  <form method="post" style="margin:0 0 12px;">
+    {{ atype_form.csrf_token }}
+    <input type="hidden" name="_section" value="account_type">
+    <div style="display:flex; gap:.75rem; align-items:end; max-width:640px;">
+      <div style="flex:1;">
+        <label class="form-label">Наименование типа</label>
+        {{ atype_form.name(class="form-control", placeholder="Касса / Банк / Прочее") }}
+      </div>
+      <div><button class="btn btn-primary">Добавить</button></div>
+    </div>
+  </form>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th style="width:80px;">ID</th><th>Наименование</th><th style="width:120px;"></th></tr></thead>
+      <tbody>
+      {% for t in types %}
+        <tr>
+          <td>{{ t.id }}</td>
+          <td>{{ t.name }}</td>
+          <td class="text-end">
+            <form method="post" action="{{ url_for('refs.account_types_delete', item_id=t.id) }}" onsubmit="return confirm('Удалить тип счета?');" style="display:inline;">
+              {{ atype_form.csrf_token }} <button class="btn btn-sm btn-outline-danger">Удалить</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="3" class="text-center">Пока нет типов</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <h2 style="margin:0 0 12px; font-size:18px;">Счета</h2>
+  <form method="post" class="mb-3">
+    {{ acct_form.csrf_token }}
+    <input type="hidden" name="_section" value="accounts">
+    <div style="display:grid; grid-template-columns: 200px 1fr 260px auto; gap:.75rem; align-items:end; max-width:100%;">
+      <div>
+        <label class="form-label">{{ acct_form.code.label }}</label>
+        {{ acct_form.code(class="form-control", placeholder="Напр. 1010") }}
+      </div>
+      <div>
+        <label class="form-label">{{ acct_form.name.label }}</label>
+        {{ acct_form.name(class="form-control", placeholder="Касса / Р/с в банке ...") }}
+      </div>
+      <div>
+        <label class="form-label">{{ acct_form.account_type_id.label }}</label>
+        {{ acct_form.account_type_id(class="form-select") }}
+      </div>
+      <div><button class="btn btn-primary">Добавить</button></div>
+    </div>
+  </form>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="width:80px;">ID</th>
+          <th style="width:160px;">Счет</th>
+          <th>Наименование</th>
+          <th style="width:220px;">Тип</th>
+          <th style="width:160px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for r in accounts %}
+        <tr>
+          <td>{{ r.id }}</td>
+          <td>{{ r.code }}</td>
+          <td>{{ r.name }}</td>
+          <td>{{ r.account_type.name if r.account_type }}</td>
+          <td class="text-end">
+            <form method="post" action="{{ url_for('refs.accounts_delete', item_id=r.id) }}" onsubmit="return confirm('Удалить счет?');" style="display:inline;">
+              {{ acct_form.csrf_token }} <button class="btn btn-sm btn-outline-danger">Удалить</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5" class="text-center">Пока нет счетов</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{% block title %}TourismOps{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-900">
+  <div class="min-h-screen grid grid-cols-1 lg:grid-cols-[260px_1fr]">
+    <aside class="bg-white border-r border-slate-200 hidden lg:block">
+      {% include "_sidebar.html" %}
+    </aside>
+    <div class="min-h-screen flex flex-col">
+      <header class="bg-white border-b border-slate-200">
+        {% include "_topbar.html" %}
+      </header>
+      <main class="p-4 md:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        {% include "_flash.html" %}
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+</body>
+</html>

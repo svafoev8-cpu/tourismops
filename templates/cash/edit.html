@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+{% block title %}Изменить операцию{% endblock %}
+{% block content %}
+<div class="bg-white border rounded-2xl shadow p-6 max-w-3xl">
+  <h1 class="text-xl font-semibold mb-4">Изменить операцию #{{ item.id }}</h1>
+  <form method="post" class="grid grid-cols-1 md:grid-cols-4 gap-3">
+    {{ form.csrf_token }}
+    <div>{{ form.type.label(class="block text-sm mb-1") }}{{ form.type(class="w-full border rounded px-3 py-2") }}</div>
+    <div>{{ form.amount.label(class="block text-sm mb-1") }}{{ form.amount(class="w-full border rounded px-3 py-2") }}</div>
+    <div>{{ form.currency.label(class="block text-sm mb-1") }}{{ form.currency(class="w-full border rounded px-3 py-2") }}</div>
+    <div class="md:col-span-4">{{ form.description.label(class="block text-sm mb-1") }}{{ form.description(class="w-full border rounded px-3 py-2") }}</div>
+    <div class="md:col-span-4">
+      <button class="bg-slate-900 text-white rounded px-4 py-2">Сохранить</button>
+      <a class="ml-2 px-3 py-2 border rounded" href="{{ url_for('cash.history') }}">Отмена</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

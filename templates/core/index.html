@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Панель — TourismOps{% endblock %}
+
+{% block page_header %}
+<h1>Добро пожаловать!</h1>
+{% endblock %}
+
+{% block content %}
+<div class="card" style="padding:16px; margin-top:8px">
+  <p>Вы успешно вошли в систему.</p>
+
+  <div style="display:flex; gap:.5rem; margin-top:.75rem">
+    {% if has_endpoint('refs.clients') %}
+      <a class="btn btn-primary" href="{{ url_for('refs.clients') }}">Справочник клиентов</a>
+    {% endif %}
+    {% if has_endpoint('cash.index') %}
+      <a class="btn" href="{{ url_for('cash.index') }}">Касса</a>
+    {% endif %}
+    {% if has_endpoint('bank.index') %}
+      <a class="btn" href="{{ url_for('bank.index') }}">Банк</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

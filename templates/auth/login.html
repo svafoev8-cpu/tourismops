@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}Вход{% endblock %}
+
+{# скрыть шапку/меню на странице логина #}
+{% block site_header %}{% endblock %}
+
+{% block head %}
+<style>
+  /* фон для страницы логина */
+  body {
+    background: radial-gradient(circle at 8% 0%, #e0f2fe, transparent 60%),
+                radial-gradient(circle at 100% 20%, #fde7f3, transparent 60%),
+                #f8fafc;
+  }
+
+  .login-wrap { display: grid; place-items: start center; min-height: calc(100vh - 160px); }
+  .login-card {
+    width: 100%; max-width: 520px; background: #fff; border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px;
+  }
+
+  .login-brand { display: grid; grid-template-columns: 64px 1fr; gap: 16px; align-items: center; margin-bottom: 16px; }
+  .login-brand img {
+    width: 64px; height: 64px; object-fit: contain; display:block;
+    background: transparent; border: 0; border-radius: 0; box-shadow: none;
+  }
+
+  .login-title { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: .2px; }
+  .login-sub { margin-top: 6px; color: var(--muted); font-size: 14px; }
+
+  .login-form { display: grid; gap: 14px; margin-top: 12px; }
+  .form-row { display: grid; gap: 6px; }
+  .form-row label { font-size: 14px; color: #374151; }
+
+  .input {
+    width: 100%; border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 12px; font-size: 14px; outline: none; transition: .15s ease; background: #fff;
+  }
+  .input:focus { border-color: #cbd5e1; box-shadow: 0 0 0 4px rgba(37,99,235,.08); }
+
+  .actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 6px; }
+  .link { color: var(--primary); font-size: 14px; text-decoration: none; }
+  .link:hover { text-decoration: underline; }
+
+  .btn.primary {
+    width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--primary);
+    background: var(--primary); color: #fff; font-weight: 600;
+  }
+  .btn.primary:hover { background: var(--primary-600); }
+
+  .login-note { margin-top: 12px; font-size: 13px; color: var(--muted); text-align: center; }
+
+  @media (max-width: 560px) {
+    .login-card { padding: 20px; }
+    .login-brand { grid-template-columns: 56px 1fr; }
+    .login-brand img { width: 56px; height: 56px; }
+    .login-title { font-size: 22px; }
+  }
+</style>
+{% endblock %}
+
+{# убираем внешнюю карточку из base.html #}
+{% block content_wrap %}
+  {% block content %}
+    <div class="login-wrap">
+      <div class="login-card">
+        <div class="login-brand">
+          <img src="{{ url_for('static', filename='images/logo.png') }}?v=3" alt="Logo">
+          <div>
+            <h1 class="login-title">Вход в систему</h1>
+            <div class="login-sub">Введите данные учётной записи, чтобы продолжить</div>
+          </div>
+        </div>
+
+        <form method="post" class="login-form">
+          <div class="form-row">
+            <label for="username">Логин</label>
+            <input id="username" name="username" class="input" placeholder="admin" required>
+          </div>
+          <div class="form-row">
+            <label for="password">Пароль</label>
+            <input id="password" type="password" name="password" class="input" placeholder="admin123" required>
+          </div>
+
+          <div class="actions">
+            <a class="link" href="#">Забыли пароль?</a>
+          </div>
+
+          <button type="submit" class="btn primary">Войти</button>
+        </form>
+
+        <div class="login-note">Доступ предоставляется сотрудникам компании</div>
+      </div>
+    </div>
+  {% endblock %}
+{% endblock %}

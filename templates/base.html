@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <title>{% block title %}Панель управления — TourismOps{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  {% block styles %}{% endblock %}
+
+  <style>
+    :root{
+      --bg:#f7f8fb; --card:#fff; --text:#111827; --muted:#6b7280;
+      --primary:#2563eb; --primary-600:#1d4ed8; --border:#e5e7eb;
+      --radius:14px; --r-sm:10px; --shadow:0 10px 30px rgba(17,24,39,.08);
+    }
+    @media (prefers-color-scheme: dark){
+      :root{ --bg:#0b1020; --card:#10172a; --text:#e5e7eb; --muted:#94a3b8; --border:#1e293b;
+             --primary:#5b8cff; --primary-600:#3e6ef0; --shadow:0 10px 24px rgba(0,0,0,.35);}
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--text);
+      font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      text-rendering:optimizeLegibility; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:1200px;margin:0 auto;padding:0 1rem}
+
+    header.navbar{background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:40}
+    .navbar-inner{display:flex;align-items:center;gap:.9rem;padding:.6rem 0}
+    .logo{display:flex;align-items:center;gap:.55rem;text-decoration:none;color:var(--text);font-weight:800;letter-spacing:.2px}
+    .logo img{height:28px;width:auto;display:block}
+
+    .menu{list-style:none;display:flex;gap:.35rem;margin:0;padding:0;flex-wrap:wrap}
+    .menu>li{display:inline-flex}
+    .menu a{
+      display:inline-block;padding:.48rem .7rem;border-radius:var(--r-sm);
+      color:var(--text);text-decoration:none;border:1px solid transparent;
+    }
+    .menu a:hover{background:rgba(0,0,0,.03);border-color:var(--border)}
+    @media (prefers-color-scheme: dark){
+      .menu a:hover{background:rgba(255,255,255,.04)}
+    }
+    .menu a.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+    .userbar{margin-left:auto;display:flex;align-items:center;gap:.5rem}
+    .tag{display:inline-block;padding:.15rem .55rem;border-radius:999px;
+         background:#eef2ff;color:#3730a3;border:1px solid #e0e7ff;font-size:.78rem}
+    @media (prefers-color-scheme: dark){
+      .tag{background:#0f1a3a;color:#9db2ff;border-color:#20316a}
+    }
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;
+         padding:.45rem .75rem;border-radius:var(--r-sm);border:1px solid var(--border);
+         background:var(--card);color:var(--text);text-decoration:none;cursor:pointer}
+    .btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .btn-primary:hover{background:var(--primary-600);border-color:var(--primary-600)}
+    .btn:active{transform:translateY(1px)}
+
+    main{padding:1.15rem 0 2rem}
+
+    .page-head{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin:0 0 .9rem}
+    .page-head h1{font-size:1.35rem;margin:0}
+    .page-actions{margin-left:auto;display:flex;gap:.5rem}
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:.65rem;border-bottom:1px solid var(--border);text-align:left}
+    thead th{background:rgba(0,0,0,.03)}
+    @media (prefers-color-scheme: dark){
+      thead th{background:rgba(255,255,255,.04)}
+    }
+
+    .flashes{margin:.9rem 0;display:grid;gap:.6rem}
+    .flash{padding:.6rem .8rem;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--card)}
+    .flash.success{border-color:#c9ecd9;background:#e6f6ee;color:#0a7a3c}
+    .flash.warning{border-color:#fde68a;background:#fffbeb;color:#92400e}
+    .flash.danger{border-color:#ffd6d6;background:#fff5f5;color:#b42318}
+    .flash.info{border-color:#bfdbfe;background:#eff6ff;color:#1e40af}
+    @media (prefers-color-scheme: dark){
+      .flash.success{border-color:#1d3b2a;background:#0d1f18;color:#a7e7c5}
+      .flash.warning{border-color:#5b4313;background:#1b1407;color:#ffdf9a}
+      .flash.danger{border-color:#5b1a1a;background:#1a0c0c;color:#ffb3b3}
+      .flash.info{border-color:#1d2f63;background:#0d1424;color:#9bbdff}
+    }
+
+    footer{color:var(--muted);border-top:1px solid var(--border);padding:1rem 0;margin-top:2rem}
+
+    @media (max-width:860px){
+      .menu a{padding:.42rem .6rem}
+      .page-head{gap:.6rem}
+      .page-head h1{font-size:1.18rem}
+    }
+  </style>
+</head>
+
+<body>
+  <header class="navbar">
+    <div class="container navbar-inner">
+      <a class="logo" href="{{ url_for('core.index') if has_endpoint('core.index') else '#' }}">
+        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo"
+             onerror="this.src='{{ url_for('static', filename='images/logo.png') }}'">
+        <span>TourismOps</span>
+      </a>
+
+      <ul class="menu">
+        {% if has_endpoint('cash.index') %}
+          <li><a href="{{ url_for('cash.index') }}" class="{{ 'active' if (request.endpoint or '').startswith('cash.') else '' }}">Касса</a></li>
+        {% endif %}
+        {% if has_endpoint('bank.index') %}
+          <li><a href="{{ url_for('bank.index') }}" class="{{ 'active' if (request.endpoint or '').startswith('bank.') else '' }}">Банк</a></li>
+        {% endif %}
+        {% if has_endpoint('tickets.index') %}
+          <li><a href="{{ url_for('tickets.index') }}" class="{{ 'active' if (request.endpoint or '').startswith('tickets.') else '' }}">Билеты</a></li>
+        {% endif %}
+        {% if has_endpoint('int.index') %}
+          <li><a href="{{ url_for('int.index') }}" class="{{ 'active' if (request.endpoint or '').startswith('int.') else '' }}">Внутренний</a></li>
+        {% endif %}
+        {% if has_endpoint('ext.index') %}
+          <li><a href="{{ url_for('ext.index') }}" class="{{ 'active' if (request.endpoint or '').startswith('ext.') else '' }}">Внешний</a></li>
+        {% endif %}
+        {% if has_endpoint('reports.index') %}
+          <li><a href="{{ url_for('reports.index') }}" class="{{ 'active' if (request.endpoint or '').startswith('reports.') else '' }}">Отчёты</a></li>
+        {% endif %}
+        {% if has_endpoint('analytics.index') %}
+          <li><a href="{{ url_for('analytics.index') }}" class="{{ 'active' if (request.endpoint or '').startswith('analytics.') else '' }}">Аналитика</a></li>
+        {% endif %}
+        {% if has_endpoint('refs.clients') %}
+          <li><a href="{{ url_for('refs.clients') }}" class="{{ 'active' if (request.endpoint or '').startswith('refs.') else '' }}">Справочник клиентов</a></li>
+        {% endif %}
+      </ul>
+
+      <div class="userbar">
+        {% if current_user.is_authenticated %}
+          <span class="tag">{{ current_user.username }}</span>
+          {% if has_endpoint('auth.logout') %}
+            <form action="{{ url_for('auth.logout') }}" method="post" style="margin:0">
+              {{ csrf_token() if csrf_token is defined }}
+              <button class="btn" type="submit" title="Выйти">Выйти</button>
+            </form>
+          {% endif %}
+        {% else %}
+          {% if has_endpoint('auth.login') %}
+            <a class="btn" href="{{ url_for('auth.login') }}">Войти</a>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flashes">
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message|safe }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <div class="page-head">
+        {% block page_header %}{% endblock %}
+        <div class="page-actions">{% block actions %}{% endblock %}</div>
+      </div>
+
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">© {{ year }} • TourismOps</div>
+  </footer>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

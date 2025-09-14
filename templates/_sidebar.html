@@ -1,0 +1,65 @@
+<div class="p-4">
+  <div class="flex items-center gap-3 mb-6">
+    <img src="{{ url_for('static', filename='images/logo.svg') }}" class="w-8 h-8" alt="logo">
+    <div>
+      <div class="font-semibold">TourismOps</div>
+      <div class="text-xs text-slate-500">админ панель</div>
+    </div>
+  </div>
+
+  <nav class="space-y-1 text-sm">
+    <a href="{{ url_for('core.dashboard') }}"
+       class="block px-3 py-2 rounded-lg hover:bg-slate-100 {% if request.endpoint=='core.dashboard' %}bg-slate-100 font-medium{% endif %}">
+       📊 Панель
+    </a>
+
+    {% set role = (current_user.role if current_user.is_authenticated else '') %}
+
+    {% if role in ['admin','executive','cashier','accountant'] %}
+    <a href="{{ url_for('cash.list_ops') }}"
+       class="block px-3 py-2 rounded-lg hover:bg-slate-100 {% if request.blueprint=='cash' %}bg-slate-100 font-medium{% endif %}">
+       💵 Касса
+    </a>
+    <a href="{{ url_for('cash.history') }}"
+       class="block px-3 py-2 rounded-lg hover:bg-slate-100 {% if request.endpoint=='cash.history' %}bg-slate-100 font-medium{% endif %}">
+       🧾 История кассы
+    </a>
+    {% endif %}
+
+    {% if role in ['admin','executive','financier','accountant'] %}
+    <a href="{{ url_for('bank.list_ops') }}"
+       class="block px-3 py-2 rounded-lg hover:bg-slate-100 {% if request.blueprint=='bank' %}bg-slate-100 font-medium{% endif %}">
+       🏦 Банки
+    </a>
+    <a href="{{ url_for('tickets.list_sales') }}"
+       class="block px-3 py-2 rounded-lg hover:bg-slate-100 {% if request.blueprint=='tickets' %}bg-slate-100 font-medium{% endif %}">
+       ✈️ Реестры билетов
+    </a>
+    {% endif %}
+
+    {% if role in ['admin','executive','manager_internal','accountant'] %}
+    <a href="{{ url_for('internal_tour.list_tours') }}"
+       class="block px-3 py-2 rounded-lg hover:bg-slate-100 {% if request.blueprint=='internal_tour' %}bg-slate-100 font-medium{% endif %}">
+       🏝️ Внутр. туризм
+    </a>
+    {% endif %}
+
+    {% if role in ['admin','executive','manager_external','accountant'] %}
+    <a href="{{ url_for('external_tour.list_tours') }}"
+       class="block px-3 py-2 rounded-lg hover:bg-slate-100 {% if request.blueprint=='external_tour' %}bg-slate-100 font-medium{% endif %}">
+       🌍 Внешн. туризм
+    </a>
+    {% endif %}
+
+    {% if role in ['admin','executive','accountant'] %}
+    <a href="{{ url_for('directory.suppliers_list') }}"
+       class="block px-3 py-2 rounded-lg hover:bg-slate-100 {% if request.blueprint=='directory' %}bg-slate-100 font-medium{% endif %}">
+       📚 Справочники
+    </a>
+    {% endif %}
+
+    {% if role in ['curator'] %}
+    <div class="px-3 py-2 text-slate-500">Режим просмотра</div>
+    {% endif %}
+  </nav>
+</div>

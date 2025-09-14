@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<h1>{{ title }}</h1>
+<form method="post" class="card p-3" novalidate>
+  {{ form.csrf_token }}
+  <div class="mb-3">
+    <label class="form-label">Код</label>
+    {{ form.code(class="form-control", placeholder="Уникальный код") }}
+    {% for e in form.code.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Наименование</label>
+    {{ form.name(class="form-control", placeholder="Название клиента") }}
+    {% for e in form.name.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+  </div>
+  <div class="d-flex gap-2">
+    {{ form.submit(class="btn btn-primary") }}
+    <a class="btn btn-secondary" href="{{ url_for('refs.clients_list') }}">Отмена</a>
+  </div>
+</form>
+{% endblock %}

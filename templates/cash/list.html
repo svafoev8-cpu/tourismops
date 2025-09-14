@@ -1,0 +1,62 @@
+{% extends 'layout.html' %}
+{% block title %}Касса{% endblock %}
+{% block content %}
+<div class="bg-white border border-slate-200 rounded-2xl shadow p-6">
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-xl font-semibold">Касса</h1>
+    <a class="px-3 py-2 border rounded hover:bg-slate-50" href="{{ url_for('cash.history') }}">🧾 История</a>
+  </div>
+
+  {% if form %}
+  <form method="post" class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6">
+    {{ form.csrf_token }}
+    <div>
+      {{ form.type.label(class="block text-sm mb-1") }}
+      {{ form.type(class="w-full border rounded px-3 py-2") }}
+    </div>
+    <div>
+      {{ form.amount.label(class="block text-sm mb-1") }}
+      {{ form.amount(class="w-full border rounded px-3 py-2") }}
+    </div>
+    <div>
+      {{ form.currency.label(class="block text-sm mb-1") }}
+      {{ form.currency(class="w-full border rounded px-3 py-2") }}
+    </div>
+    <div class="md:col-span-4">
+      {{ form.description.label(class="block text-sm mb-1") }}
+      {{ form.description(class="w-full border rounded px-3 py-2") }}
+    </div>
+    <div class="md:col-span-4">
+      <button class="bg-slate-900 text-white rounded px-4 py-2">Сохранить</button>
+    </div>
+  </form>
+  {% endif %}
+
+  <table class="w-full text-sm">
+    <thead>
+      <tr class="text-left text-slate-500">
+        <th class="py-2">Дата</th>
+        <th>Тип</th>
+        <th>Сумма</th>
+        <th>Валюта</th>
+        <th>Описание</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in items %}
+      <tr class="border-t">
+        <td class="py-2">{{ i.timestamp.strftime('%Y-%m-%d %H:%M') if i.timestamp }}</td>
+        <td>{{ 'Приход' if i.type=='income' else 'Расход' }}</td>
+        <td>{{ i.amount }}</td>
+        <td>{{ i.currency }}</td>
+        <td>{{ i.description }}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="5" class="py-4 text-slate-500">Пока нет операций</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
