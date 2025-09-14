@@ -9,3 +9,5 @@ cp .env.example .env
 flask --app app.py run
 
 ![CI](https://github.com/svafoev8-cpu/tourismops/actions/workflows/ci.yml/badge.svg)
+
+![CI](https://github.com/svafoev8-cpu/tourismops/actions/workflows/ci.yml/badge.svg)
