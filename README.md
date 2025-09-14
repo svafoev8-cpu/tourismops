@@ -15,3 +15,14 @@ flask --app app.py run
 ![CI](https://github.com/svafoev8-cpu/tourismops/actions/workflows/ci.yml/badge.svg)
 
 ![CI](https://github.com/svafoev8-cpu/tourismops/actions/workflows/ci.yml/badge.svg)
+### Dev tools
+
+`ash
+pip install -r requirements.txt -r requirements-dev.txt
+pre-commit install
+pre-commit run --all-files
+
+с
+exit
+>> `
+>> "@
